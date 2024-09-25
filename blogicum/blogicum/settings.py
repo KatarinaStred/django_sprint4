@@ -25,7 +25,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_bootstrap5',
-
     'blog.apps.BlogConfig',
     'pages.apps.PagesConfig',
 ]
@@ -48,7 +47,9 @@ if DEBUG:
     INSTALLED_APPS += [
         'debug_toolbar',
     ]
-    INTERNAL_IPS = ['127.0.0.1',]
+    INTERNAL_IPS = [
+        '127.0.0.1',
+    ]
 else:
     ALLOWED_HOSTS += [
         'localhost',
