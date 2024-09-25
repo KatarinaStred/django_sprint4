@@ -13,9 +13,8 @@ SECRET_KEY = 'django-insecure-$k0gimmb7u=!lcacnnh6b*5y(v2f^u0puk*eejtcc=cc8y-%li
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',]
+ALLOWED_HOSTS = []
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -25,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_bootstrap5',
 
     'blog.apps.BlogConfig',
     'pages.apps.PagesConfig',
@@ -136,4 +136,13 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+MEDIA_ROOT = BASE_DIR / 'media/'
+MEDIA_URL = 'media/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails/'
+
 CSRF_FAILURE_VIEW = 'pages.views.csrf_failure'
+
+LOGIN_REDIRECT_URL = 'blog:index'
+LOGIN_URL = 'login'

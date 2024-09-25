@@ -1,17 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse
-
-
-def about(request: HttpRequest) -> HttpResponse:
-    """Рассказ о проекте."""
-    template = 'pages/about.html'
-    return render(request, template)
-
-
-def rules(request: HttpRequest) -> HttpResponse:
-    """Отображений правил проекта."""
-    template = 'pages/rules.html'
-    return render(request, template)
 
 
 def page_not_found(request, exception):
