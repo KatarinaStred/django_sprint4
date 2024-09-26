@@ -1,22 +1,22 @@
 from django.db import models
-from core.models import BaseModel
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-User = get_user_model()
+from core.service import User
+from core.models import PublishedCreatedModel
 
 
-class Category(BaseModel):
-    """Описание модели Категория"""
+class Category(PublishedCreatedModel):
+    """Описание модели Категория."""
 
-    title = models.CharField(max_length=256, verbose_name='Заголовок')
+    title = models.CharField(max_length=30, verbose_name='Заголовок')
     description = models.TextField('Описание')
     slug = models.SlugField(
         max_length=64,
         unique=True,
         verbose_name='Идентификатор',
-        help_text='Идентификатор страницы для URL; разрешены символы латиницы,'
-                  ' цифры, дефис и подчёркивание.'
+        help_text=(
+            'Идентификатор страницы для URL; '
+            'разрешены символы латиницы, цифры, дефис и подчёркивание.')
     )
 
     class Meta:
@@ -27,10 +27,10 @@ class Category(BaseModel):
         return self.title
 
 
-class Location(BaseModel):
-    """Описание модели Местоположение"""
+class Location(PublishedCreatedModel):
+    """Описание модели Местоположение."""
 
-    name = models.CharField(max_length=256, verbose_name='Название места')
+    name = models.CharField(max_length=30, verbose_name='Название места')
 
     class Meta:
         verbose_name = 'местоположение'
@@ -40,15 +40,16 @@ class Location(BaseModel):
         return self.name
 
 
-class Post(BaseModel):
-    """Описание модели Публикации"""
+class Post(PublishedCreatedModel):
+    """Описание модели Публикации."""
 
-    title = models.CharField(max_length=256, verbose_name='Заголовок')
+    title = models.CharField(max_length=30, verbose_name='Заголовок')
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
-        help_text='Если установить дату и время в будущем '
-                  '— можно делать отложенные публикации.'
+        help_text=(
+            'Если установить дату и время в будущем '
+            '— можно делать отложенные публикации.')
     )
     author = models.ForeignKey(
         User,
@@ -113,4 +114,5 @@ class Comment(models.Model):
         default_related_name = 'comments'
 
     def __str__(self):
-        return self.text
+        return (f'Комментарий автора {self.author}'
+                f' к посту {self.post}, текст: {self.text}')
