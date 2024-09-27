@@ -1,7 +1,6 @@
-from django.db.models import Count
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     CreateView, UpdateView, DeleteView, DetailView
@@ -12,32 +11,13 @@ from blog.mixins import (
     ListPostsMixin, WorkCommentsMixin, WorkPostsMixin
 )
 from blog.models import Category, Comment, Post
-from core.service import User
+from core.service import get_post_list, get_published_post_list
 
-
-def get_post_list():
-    """Получение списка всех постов."""
-    return Post.objects.select_related(
-        'author',
-        'category',
-        'location'
-    ).annotate(comment_count=Count('comments')).order_by('-pub_date')
-
-
-def get_published_post_list():
-    """Получение списка всех опубликованных постов."""
-    return get_post_list().filter(
-        category__is_published=True,
-        is_published=True,
-        pub_date__lt=timezone.now()
-    )
+User = get_user_model()
 
 
 class Index(ListPostsMixin):
     """Отображение постов на главной странице."""
-
-    def get_queryset(self):
-        return get_published_post_list()
 
 
 class CreatePost(LoginRequiredMixin, CreateView):
@@ -61,8 +41,9 @@ class EditPost(WorkPostsMixin, UpdateView):
     """Редактирование поста автором."""
 
     def get_success_url(self):
-        return reverse('blog:post_detail',
-                       kwargs={'post_id': self.object.pk})
+        return reverse(
+            'blog:post_detail',
+            kwargs={'post_id': self.object.pk})
 
 
 class DeletePost(WorkPostsMixin, DeleteView):
@@ -174,7 +155,7 @@ class CreateComment(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CreateCommentForm
     template_name = 'blog/comment.html'
-    pk_url_kwarg = 'post_id'
+    pk_url_kwarg = 'comment_id'
 
     def get_success_url(self):
         return reverse('blog:post_detail', args=[self.kwargs['post_id']])
@@ -185,13 +166,15 @@ class CreateComment(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class EditComment(WorkCommentsMixin, UpdateView):
+class EditComment(WorkCommentsMixin,
+                  UpdateView):
     """Редактирование комментария."""
 
     form_class = CreateCommentForm
 
 
-class DeleteComment(WorkCommentsMixin, DeleteView):
+class DeleteComment(WorkCommentsMixin,
+                    DeleteView):
     """Удаление комментария."""
 
     pass

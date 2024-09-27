@@ -1,4 +1,5 @@
 from django import forms
+from django.utils import timezone
 
 from .models import Comment, Post, User
 
@@ -12,6 +13,12 @@ class CreatePostForm(forms.ModelForm):
             'pub_date': forms.DateTimeInput(format='%Y-%m-%dT%H:%M',
                                             attrs={'type': 'datetime-local'})
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pub_date'].initial = timezone.localtime(
+            timezone.now()
+        ).strftime('%Y-%m-%dT%H:%M')
 
 
 class CreateCommentForm(forms.ModelForm):

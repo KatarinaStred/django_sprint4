@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 
-from core.service import User
 from core.models import PublishedCreatedModel
+
+User = get_user_model()
 
 
 class Category(PublishedCreatedModel):
@@ -43,7 +45,7 @@ class Location(PublishedCreatedModel):
 class Post(PublishedCreatedModel):
     """Описание модели Публикации."""
 
-    title = models.CharField(max_length=30, verbose_name='Заголовок')
+    title = models.CharField(max_length=50, verbose_name='Заголовок')
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
@@ -82,7 +84,7 @@ class Post(PublishedCreatedModel):
 
     def get_absolute_url(self):
         """Получение ссылки на объект"""
-        return reverse('blog:post_detail', kwargs={'id': self.pk})
+        return reverse('blog:post_detail', args=[self.pk])
 
     def __str__(self):
         return self.title
