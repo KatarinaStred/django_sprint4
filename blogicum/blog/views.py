@@ -40,11 +40,6 @@ class CreatePost(LoginRequiredMixin, CreateView):
 class EditPost(WorkPostsMixin, UpdateView):
     """Редактирование поста автором."""
 
-    def get_success_url(self):
-        return reverse(
-            'blog:post_detail',
-            kwargs={'post_id': self.object.pk})
-
 
 class DeletePost(WorkPostsMixin, DeleteView):
     """Удаление поста автором."""
@@ -83,14 +78,13 @@ class CategoryPosts(ListPostsMixin):
     """Определение категории публикации."""
 
     template_name = 'blog/category.html'
-    category = None
 
     def get_queryset(self):
         category = get_object_or_404(
             Category,
             is_published=True,
             slug=self.kwargs.get('category_slug'))
-        return get_published_post_list().filter(category=category)
+        return super().get_queryset().filter(category=category)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -113,7 +107,7 @@ class Profile(ListPostsMixin):
             User,
             username=self.kwargs['username'])
         if self.request.user != author:
-            return get_published_post_list().filter(author=author)
+            return super().get_queryset().filter(author=author)
         return get_post_list().filter(author=author)
 
     def get_context_data(self, **kwargs):
@@ -144,10 +138,6 @@ class EditProfile(LoginRequiredMixin, UpdateView):
             kwargs={'username': self.request.user.username}
         )
 
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
 
 class CreateComment(LoginRequiredMixin, CreateView):
     """Добавление комментария."""
@@ -176,5 +166,3 @@ class EditComment(WorkCommentsMixin,
 class DeleteComment(WorkCommentsMixin,
                     DeleteView):
     """Удаление комментария."""
-
-    pass

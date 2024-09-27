@@ -82,12 +82,12 @@ class Post(PublishedCreatedModel):
         ordering = ('-pub_date',)
         default_related_name = 'posts'
 
+    def __str__(self):
+        return self.title
+
     def get_absolute_url(self):
         """Получение ссылки на объект"""
         return reverse('blog:post_detail', args=[self.pk])
-
-    def __str__(self):
-        return self.title
 
 
 class Comment(models.Model):

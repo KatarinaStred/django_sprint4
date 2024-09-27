@@ -3,10 +3,10 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import ListView
 
-from core.service import get_published_post_list
 from blog.constants import PAGINATOR_COUNT
 from blog.forms import CreatePostForm
 from blog.models import Comment, Post
+from core.service import get_published_post_list
 
 
 class ListPostsMixin(ListView):
